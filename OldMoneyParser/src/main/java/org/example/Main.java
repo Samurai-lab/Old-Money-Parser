@@ -15,22 +15,25 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.devtools.v85.io.IO;
-import org.openqa.selenium.safari.SafariDriver;
-import org.openqa.selenium.safari.SafariOptions;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
-        for (int i = 0; i < 10; i++) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Введите название необходимой монеты: ");
-            String searchText = scanner.nextLine();
+        Boolean rewriteFile = false;
+        ArrayList<String> arrayListOfWords = new ArrayList<>();
+        arrayListOfWords = readFileInfo("money");
+
+        for (int i = 0; i < arrayListOfWords.size(); i++) {
+            if (i != 0) rewriteFile = true;
+            String searchText = arrayListOfWords.get(i);
 
             // Создание экземпляра WebDriver
             WebDriver driver;
@@ -49,22 +52,19 @@ public class Main {
             searchInput.sendKeys(searchText);
             searchInput.sendKeys(Keys.ENTER);
 
-            // Отправка формы поиска
-
-
-            Thread.sleep(1000);
+          /*  Thread.sleep(1000);*/
 
             searchInput = driver.findElement(By.className("value"));
 
             searchInput.sendKeys(Keys.ENTER);
 
-            getTextFromHtml(driver, searchText);
+            getTextFromHtml(driver, searchText, rewriteFile);
         }
 
 
     }
 
-    private static void getTextFromHtml(WebDriver driver, String searchText) {
+    private static void getTextFromHtml(WebDriver driver, String searchText, Boolean rewriteFile) {
         String textFromSite = "";
         OkHttpClient client = new OkHttpClient();
         // URL сайта и текст, который нужно найти
@@ -89,9 +89,9 @@ public class Main {
             public void onResponse(@NotNull okhttp3.Call call, @NotNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String htmlContent = response.body().string();
-                    updateFile("hello", searchText
+                    updateFile("all information", searchText
                             + "\n\n" + parsTableInfo(htmlContent, 1)
-                            + "\n" + parsTablePrice(htmlContent, 4));
+                            + "\n" + parsTablePrice(htmlContent, 4), rewriteFile);
 
                 } else {
                     System.out.println("Ошибка при выполнении запроса: " + response.code());
@@ -100,8 +100,8 @@ public class Main {
         });
     }
 
-    private static void updateFile(String fileName, String text) {
-        try (FileWriter writer = new FileWriter(fileName + ".txt", false)) {
+    private static void updateFile(String fileName, String text, Boolean rewriteFile) {
+        try (FileWriter writer = new FileWriter(fileName + ".txt", rewriteFile)) {
             // запись всей строки
             writer.write(text);
             // запись по символам
@@ -112,6 +112,25 @@ public class Main {
 
             System.out.println(ex.getMessage());
         }
+    }
+
+    private static ArrayList readFileInfo(String filename) {
+        ArrayList<String> words = new ArrayList<>();
+        int iteration = 0;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filename + ".txt"));
+            String line = reader.readLine();
+            while (line != null) {
+                words.add(iteration, line);
+                System.out.println(line);
+                line = reader.readLine();
+                iteration++;
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return words;
     }
 
     private static String parsTableInfo(String htmlContent, Integer tableNumber) {
