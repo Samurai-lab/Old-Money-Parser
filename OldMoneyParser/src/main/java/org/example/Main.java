@@ -60,8 +60,6 @@ public class Main {
 
             getTextFromHtml(driver, searchText, rewriteFile);
         }
-
-
     }
 
     private static void getTextFromHtml(WebDriver driver, String searchText, Boolean rewriteFile) {
