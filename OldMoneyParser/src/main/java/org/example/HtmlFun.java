@@ -16,7 +16,6 @@ import java.io.IOException;
 import static org.example.FileFun.updateFile;
 
 public class HtmlFun {
-
     protected static void getTextFromHtml(WebDriver driver, String searchText, Boolean rewriteFile) {
         OkHttpClient client = new OkHttpClient();
         // URL сайта и текст, который нужно найти
@@ -27,7 +26,6 @@ public class HtmlFun {
                 .build();
         // Закрытие браузера
         driver.quit();
-
         // Выполняем запрос асинхронно
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -70,7 +68,7 @@ public class HtmlFun {
         String tableInfo = "";
         String value = "";
         Document doc = Jsoup.parse(htmlContent);
-        Element table = doc.select("table").get(tableNumber); // получить первую таблицу
+        Element table = doc.select("table").get(tableNumber); // получить вторую таблицу
         Elements rows = table.select("tr"); // получить все строки
         for (Element row : rows) {
             Elements columnsOne = row.select("th"); // получить все столбцы

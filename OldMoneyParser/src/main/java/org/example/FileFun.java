@@ -27,7 +27,7 @@ public class FileFun {
             String line = reader.readLine();
             while (line != null) {
                 words.add(iteration, line);
-                System.out.println(line);
+                System.out.println(line); /** При продакшене удалить!!**/
                 line = reader.readLine();
                 iteration++;
             }
