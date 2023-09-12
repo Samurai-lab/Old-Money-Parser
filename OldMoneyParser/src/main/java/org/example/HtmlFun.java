@@ -9,17 +9,38 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.IOException;
 
 import static org.example.FileFun.updateFile;
 
 public class HtmlFun {
-    protected static void getTextFromHtml(WebDriver driver, String searchText, Boolean rewriteFile) {
+    protected void getTextFromHtml(WebDriver driver, String searchText, Boolean rewriteFile) {
         OkHttpClient client = new OkHttpClient();
         // URL сайта и текст, который нужно найти
         String url = driver.getCurrentUrl();
+        WebDriver newDriver;
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        /*options.setProxy(proxy);*/
+        newDriver = new ChromeDriver(options);
+
+
+        // Открытие сайта
+        newDriver.get(driver.getCurrentUrl());
+        String webElementText = "";
+        try {
+            WebElement webElement = newDriver.findElement(By.id("swap-block"));
+            webElementText += webElement.getText();
+        } catch (Exception e) {
+            System.out.println("Table with price is not found");
+        }
         // Создаем запрос
         Request request = new Request.Builder()
                 .url(url)
@@ -27,6 +48,7 @@ public class HtmlFun {
         // Закрытие браузера
         driver.quit();
         // Выполняем запрос асинхронно
+        String finalWebElementText = webElementText;
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
@@ -39,13 +61,15 @@ public class HtmlFun {
                     String htmlContent = response.body().string();
                     updateFile("all information", searchText
                             + "\n\n" + parsTableInfo(htmlContent, 1)
-                            + "\n" + parsTablePrice(htmlContent, 4), rewriteFile);
+                            + "\n" + parsTablePrice(htmlContent, 4)
+                            + "\n" + "price: " + finalWebElementText, rewriteFile);
 
                 } else {
                     System.out.println("Ошибка при выполнении запроса: " + response.code());
                 }
             }
         });
+        newDriver.quit();
     }
 
     private static String parsTableInfo(String htmlContent, Integer tableNumber) {

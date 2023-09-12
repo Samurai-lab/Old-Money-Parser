@@ -12,9 +12,6 @@ import java.security.DrbgParameters;
 import java.util.ArrayList;
 
 
-import static org.example.HtmlFun.getTextFromHtml;
-
-
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
@@ -27,40 +24,40 @@ public class Main {
         for (int i = 0; i < arrayListOfWords.size(); i++) {
             if (i != 0) rewriteFile = true;
             String searchText = arrayListOfWords.get(i);
-            // Создание экземпляра WebDriver
+
             WebDriver driver;
-            // Создание объекта Proxy
+
             Proxy proxy = new Proxy();
             DesiredCapabilities dc = new DesiredCapabilities();
-            // Пример использования пула IP-адресов
+
             nextIPAddress = pool.getNextIPAddress();
-            System.out.println(nextIPAddress); /** При продакшене удалить!!**/
-            // Установка адреса и порта прокси
+            /*System.out.println(nextIPAddress); *//*/** При продакшене удалить!!**/
             proxy.setHttpProxy(nextIPAddress);
             proxy.setSslProxy(nextIPAddress);
 
             dc.setCapability(CapabilityType.PROXY, proxy);
-
             ChromeOptions options = new ChromeOptions();
-            /*options.addArguments("--headless");*/
-            options.setProxy(proxy);
+            options.addArguments("--headless");
+
             driver = new ChromeDriver(options);
 
-            // Открытие сайта
             driver.get("https://ru.ucoin.net/catalog");
 
-            // Нахождение поисковой строки
+
             try {
                 WebElement searchInput = driver.findElement(By.id("search"));
 
-                // Ввод данных в поисковую строку
+
                 searchInput.sendKeys(searchText);
                 searchInput.sendKeys(Keys.ENTER);
 
                 searchInput = driver.findElement(By.className("value"));
                 searchInput.sendKeys(Keys.ENTER);
 
-                getTextFromHtml(driver, searchText, rewriteFile);
+
+                HtmlFun htmlFun = new HtmlFun();
+                htmlFun.getTextFromHtml(driver, searchText, rewriteFile);
+
             } catch (Exception e) {
                 System.out.println("This element is not found");
             }
