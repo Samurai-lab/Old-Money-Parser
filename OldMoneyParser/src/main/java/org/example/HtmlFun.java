@@ -41,6 +41,7 @@ public class HtmlFun {
         } catch (Exception e) {
             System.out.println("Table with price is not found");
         }
+
         
         Request request = new Request.Builder()
                 .url(url)
