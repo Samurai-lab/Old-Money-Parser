@@ -22,5 +22,4 @@ public class IPAddressesPool {
         index = (index + 1) % ipAddresses.size();
         return ipAddress;
     }
-
 }

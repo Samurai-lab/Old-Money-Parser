@@ -1,17 +1,13 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class FileFun {
     protected static void updateFile(String fileName, String text, Boolean rewriteFile) {
-        try (FileWriter writer = new FileWriter(fileName + ".txt", rewriteFile)) {
-            // запись всей строки
+        try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fileName + ".txt", rewriteFile), "Cp1251"))) {
             writer.write(text);
-            // запись по символам
             writer.append('\n');
             writer.flush();
         } catch (IOException ex) {

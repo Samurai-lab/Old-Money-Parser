@@ -27,36 +27,28 @@ public class Main {
             if (i != 0) rewriteFile = true;
             String searchText = arrayListOfWords.get(i);
 
-            // Создание экземпляра WebDriver
             WebDriver driver;
 
-            // Создание объекта Proxy
             Proxy proxy = new Proxy();
 
             DesiredCapabilities dc = new DesiredCapabilities();
 
-            // Пример использования пула IP-адресов
             nextIPAddress = pool.getNextIPAddress();
-            System.out.println(nextIPAddress);
 
-            // Установка адреса и порта прокси
             proxy.setHttpProxy(nextIPAddress);
             proxy.setSslProxy(nextIPAddress);
 
             dc.setCapability(CapabilityType.PROXY, proxy);
 
             ChromeOptions options = new ChromeOptions();
-            /*options.addArguments("--headless");*/
-            options.setProxy(proxy);
+            options.addArguments("--headless");
+            /*options.setProxy(proxy);*/
             driver = new ChromeDriver(options);
 
-            // Открытие сайта
             driver.get("https://ru.ucoin.net/catalog");
 
-            // Нахождение поисковой строки
             WebElement searchInput = driver.findElement(By.id("search"));
 
-            // Ввод данных в поисковую строку
             searchInput.sendKeys(searchText);
             searchInput.sendKeys(Keys.ENTER);
 
