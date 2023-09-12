@@ -32,7 +32,6 @@ public class HtmlFun {
         /*options.setProxy(proxy);*/
         newDriver = new ChromeDriver(options);
 
-
         // Открытие сайта
         newDriver.get(driver.getCurrentUrl());
         String webElementText = "";
@@ -42,8 +41,7 @@ public class HtmlFun {
         } catch (Exception e) {
             System.out.println("Table with price is not found");
         }
-
-
+        
         Request request = new Request.Builder()
                 .url(url)
                 .build();
